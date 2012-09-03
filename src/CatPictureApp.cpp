@@ -21,6 +21,8 @@ private:
 
 	static const int width=800;
 	static const int height=600;
+
+	void drawRect(int x, int y, int width, int height, int red, int green, int blue, uint8_t* dataArray);
 };
 
 void CatPictureApp::prepareSettings(Settings* settings){
@@ -42,18 +44,7 @@ void CatPictureApp::update()
 {
 	uint8_t* dataArray = (*surface_).getData();
 
-	for(int i = 0;i<(*surface_).getWidth()*(*surface_).getHeight();i++){
-		dataArray[3*i]= dataArray[3*i]*3;
-		dataArray[3*i+1]=dataArray[3*i+1]++;
-		dataArray[3*i+2]=2*dataArray[3*i+2];
-
-		if(dataArray[3*i]>255)
-			dataArray[3*i] = 1;
-		if(dataArray[3*i+1]>255)
-			dataArray[3*i+1] = 0;
-		if(dataArray[3*i+2] > 255)
-			dataArray[3*i+2] = 1;
-	}
+	drawRect(0,0, 100,100, 255, 0, 0, dataArray);
 
 	(*texture_).update(*surface_,(*surface_).getBounds());
 }
@@ -62,6 +53,16 @@ void CatPictureApp::draw()
 {
 	// clear out the window with black
 	gl::draw(*texture_); 
+}
+
+void CatPictureApp::drawRect(int x, int y, int width, int height, int red, int green, int blue, uint8_t* dataArray){
+	for(int i = y; i<height; i++){
+		for(int j = x; j<width; j++){
+			dataArray[3*(j+i*(*surface_).getWidth())] = red;
+			dataArray[3*(j+i*(*surface_).getWidth())+1] = green;
+			dataArray[3*(j+i*(*surface_).getWidth())+2] = blue;
+		}
+	}
 }
 
 CINDER_APP_BASIC( CatPictureApp, RendererGl )
