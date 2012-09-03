@@ -44,7 +44,20 @@ void CatPictureApp::update()
 {
 	uint8_t* dataArray = (*surface_).getData();
 
-	drawRect(0,0, 100,100, 255, 0, 0, dataArray);
+	for(int i = 0;i<(*surface_).getWidth()*(*surface_).getHeight();i++){
+		dataArray[i*3] = dataArray[i*3]*3;
+		dataArray[i*3+1] = dataArray[i*3+1]++;
+		dataArray[i*3+2] = dataArray[i*3+2]*2;
+
+		if(dataArray[i*3]>255)
+			dataArray[i*3] = 1;
+		if(dataArray[i*3+1]>255)
+			dataArray[i*3+1] = 0;
+		if(dataArray[i*3+2] > 255)
+			dataArray[i*3+2] = 1;
+	}
+
+	drawRect(0,0,400,300, 255-dataArray[0], 255-dataArray[1], 255-dataArray[2], dataArray);
 
 	(*texture_).update(*surface_,(*surface_).getBounds());
 }
