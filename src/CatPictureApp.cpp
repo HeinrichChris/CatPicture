@@ -1,3 +1,4 @@
+// Added some comments to your code but still need to be commented more
 #include "cinder/app/AppBasic.h"
 #include "cinder/gl/gl.h"
 #include "cinder/gl/Texture.h"
@@ -21,6 +22,10 @@ private:
 
 	static const int width=800;
 	static const int height=600;
+	/** added a variable to get rid of the multiplication in your for loop
+	  * declaration. This removes having to use the (*surface_).getWidth() and 
+	  * the (*surface_).getHeight() calls. */
+	static const int surfaceLength = width*height;
 
 	void drawRect(int x, int y, int width, int height, int red, int green, int blue, uint8_t* dataArray);
 	void tint(int red, int green, int blue, uint8_t* dataArray);
@@ -45,15 +50,18 @@ void CatPictureApp::update()
 {
 	uint8_t* dataArray = (*surface_).getData();
 
+	// initialize red, green, and blue to the current color of the dataArray
 	int red = dataArray[0];
 	int green = dataArray[1];
 	int blue = dataArray[2];
 
-	for(int i = 0;i<(*surface_).getWidth()*(*surface_).getHeight();i++){
+	// change each color by the previous color updated by some factor
+	for(int i = 0;i<surfaceLength;i++){ //removed the .getWidth() and .getHeight() and replaced it with surfaceLength
 		red = red*3;
 		green = green++;
 		blue = blue*2;
 
+		// check for each color to be below 255
 		if(red>255)
 			red = 1;
 		if(green>255)
@@ -62,7 +70,7 @@ void CatPictureApp::update()
 			blue = 1;
 	}
 
-	drawRect(0,0,(*surface_).getWidth()/2, (*surface_).getHeight()/2, 255-red, 255-green, 255-blue, dataArray);
+	drawRect(0,0,width/2, height/2, 255-red, 255-green, 255-blue, dataArray); //replaced (*surface_).getWidth() with width/2 and (*surface_).getHeight() with height/2
 	tint(50, 10, 25, dataArray);
 	(*texture_).update(*surface_,(*surface_).getBounds());
 }
@@ -83,7 +91,7 @@ void CatPictureApp::drawRect(int x, int y, int width, int height, int red, int g
 }
 
 void CatPictureApp::tint(int red, int green, int blue, uint8_t* dataArray){
-	for(int i = 0; i<(*surface_).getWidth()*(*surface_).getHeight();i++){
+	for(int i = 0; i<surfaceLength;i++){ //did the same thing in the update for loop
 		dataArray[3*i] += red;
 		dataArray[3*i+1] += green;
 		dataArray[3*i+2] += blue;
